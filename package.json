@@ -1,0 +1,26 @@
+{
+  "name": "kisetsu",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node src/index.ts",
+    "dev": "nodemon src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.3.3",
+    "concurrently": "^8.2.0",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
