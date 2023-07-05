@@ -90,7 +90,7 @@ setup/.env
 # nyc
 .nyc_output
 
-dist/
 build/
 types/
 package-lock.json
+.vscode/

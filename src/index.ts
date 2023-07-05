@@ -1,15 +1,7 @@
-import dotenv from 'dotenv';
-import express, { Express, Request, Response } from 'express';
+import app from './app'
+import { config } from './utils/config'
+import { logger } from './utils/logger'
 
-dotenv.config();
-
-const app: Express = express();
-const port = process.env['PORT'];
-
-app.get('/', (_req: Request, res: Response) => {
-  res.send('kisetsu');
-});
-
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+app.listen(config.app['PORT'], () => {
+  logger.info(`Server running on port ${config.app['PORT']}`)
+})
