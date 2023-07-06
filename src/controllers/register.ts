@@ -10,7 +10,7 @@ registerRouter.post('/', async (req: Request, res: Response) => {
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
 
-  const user: any = new User({
+  const user = new User({
     username,
     name,
     passwordHash,

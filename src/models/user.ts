@@ -1,6 +1,12 @@
 import mongoose from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 
+interface IUser {
+  username: string
+  name: string
+  passwordHash: string
+}
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -22,6 +28,6 @@ userSchema.set('toJSON', {
   },
 })
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model<IUser>('User', userSchema)
 
 export default User
