@@ -9,8 +9,11 @@ import {
 } from './middleware/errorHandling'
 import { config } from './utils/config'
 import { logger } from './utils/logger'
+import 'express-async-errors'
 
 const app = express()
+
+mongoose.set('strictQuery', false)
 
 mongoose
   .connect(config.database['DB_HOST'])
@@ -22,6 +25,7 @@ mongoose
   })
 
 app.use(cors())
+app.use(express.static('build'))
 app.use(express.json())
 app.use(requestLogger)
 
