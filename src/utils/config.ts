@@ -2,7 +2,7 @@ import { logger } from './logger'
 
 export const config = {
   app: { PORT: getConfig('PORT') },
-  database: { DB_HOST: getConfig('DB_HOST') },
+  database: { DB_HOST: getConfig('DB_HOST'), SECRET: getConfig('SECRET') },
 }
 
 function getConfig(envKey: string): string {

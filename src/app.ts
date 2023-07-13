@@ -10,6 +10,7 @@ import {
 import { config } from './utils/config'
 import { logger } from './utils/logger'
 import 'express-async-errors'
+import { loginRouter } from './controllers/login'
 
 const app = express()
 
@@ -30,6 +31,7 @@ app.use(express.json())
 app.use(requestLogger)
 
 app.use('/register', registerRouter)
+app.use('/login', loginRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)

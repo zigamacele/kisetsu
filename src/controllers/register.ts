@@ -10,7 +10,9 @@ registerRouter.post(
     try {
       const { username, name, password } = req.body
 
-      if (!password) res.status(400).json({ error: 'Password is required' })
+      if (!password) {
+        res.status(400).json({ error: 'Password is required' })
+      }
       if (password.length < 8)
         res
           .status(400)
