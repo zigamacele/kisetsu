@@ -9,7 +9,7 @@ export const loginRouter = Router()
 loginRouter.post('/', async (req: Request, res: Response) => {
   const { username, password } = req.body
   if (!password) {
-    res.status(400).json({ error: 'invalid username or password' })
+    res.status(401).json({ error: 'invalid username or password' })
   }
   const user = await User.findOne({ username })
   const isPasswordCorrect =

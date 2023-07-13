@@ -146,6 +146,76 @@ describe('user registration', () => {
   })
 })
 
+describe('user login', () => {
+  test('logging in with correct credentials succeeds', async () => {
+    const newUser = {
+      username: 'root',
+      password: 'secret',
+    }
+
+    const result = await api
+      .post('/login')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    console.log(result)
+
+    expect(result.body.token).toBeDefined()
+  })
+
+  test('logging in with invalid credentials fails', async () => {
+    const newUser = {
+      username: 'root',
+      password: 'notsecret',
+    }
+
+    const result = await api
+      .post('/login')
+      .send(newUser)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    console.log(result)
+
+    expect(result.body.token).toBeUndefined()
+  })
+
+  test('logging in without username fails', async () => {
+    const newUser = {
+      password: 'secret',
+    }
+
+    const result = await api
+      .post('/login')
+      .send(newUser)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    console.log(result)
+
+    expect(result.body.error).toContain('invalid username or password')
+    expect(result.body.token).toBeUndefined()
+  })
+
+  test('logging in without password fails', async () => {
+    const newUser = {
+      username: 'root',
+    }
+
+    const result = await api
+      .post('/login')
+      .send(newUser)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    console.log(result)
+
+    expect(result.body.error).toContain('invalid username or password')
+    expect(result.body.token).toBeUndefined()
+  })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
