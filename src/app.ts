@@ -2,15 +2,12 @@ import cors from 'cors'
 import express from 'express'
 import mongoose from 'mongoose'
 import { registerRouter } from './controllers/register'
-import {
-  errorHandler,
-  requestLogger,
-  unknownEndpoint,
-} from './middleware/errorHandling'
+import { errorHandler, unknownEndpoint } from './middleware/errorHandling'
 import { config } from './utils/config'
 import { logger } from './utils/logger'
 import 'express-async-errors'
 import { loginRouter } from './controllers/login'
+import { animeRouter } from './controllers/anime'
 
 const app = express()
 
@@ -28,10 +25,10 @@ mongoose
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
-app.use(requestLogger)
 
 app.use('/register', registerRouter)
 app.use('/login', loginRouter)
+app.use('/anime', animeRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
