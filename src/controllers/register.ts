@@ -31,6 +31,8 @@ registerRouter.post(
 
       res.status(201).json(savedUser)
     } catch (error) {
+      console.error(error)
+
       next(error)
     }
   }
