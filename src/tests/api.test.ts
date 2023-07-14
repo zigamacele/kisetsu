@@ -5,6 +5,8 @@ import User from '../models/user'
 
 import { usersInDB } from './test_helpers'
 import mongoose from 'mongoose'
+import jwt from 'jsonwebtoken'
+import { config } from '../utils/config'
 
 const api = supertest(app)
 
@@ -209,11 +211,27 @@ describe('user login', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    console.log(result)
-
     expect(result.body.error).toContain('invalid username or password')
     expect(result.body.token).toBeUndefined()
   })
+})
+
+interface JwyPayload {
+  username: string
+  id: string
+  iat: number
+  exp: number
+}
+
+test('logged user has valid jwt token in document', async () => {
+  const user = await User.findOne({ username: 'root' })
+  if (user && user.jwt) {
+    const decodedToken = jwt.verify(
+      user.jwt,
+      config.database['SECRET']
+    ) as JwyPayload
+    expect(decodedToken.exp).toBeGreaterThanOrEqual(Date.now() / 1000)
+  }
 })
 
 afterAll(async () => {

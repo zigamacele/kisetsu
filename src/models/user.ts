@@ -5,6 +5,7 @@ interface IUser {
   username: string
   name: string
   passwordHash: string
+  jwt: string | null
 }
 
 const userSchema = new mongoose.Schema({
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   name: String,
   passwordHash: { type: String, required: true, minlength: 8 },
+  jwt: { default: null, type: String },
 })
 
 userSchema.plugin(uniqueValidator)

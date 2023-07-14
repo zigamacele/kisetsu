@@ -30,6 +30,10 @@ loginRouter.post('/', async (req: Request, res: Response) => {
     expiresIn: 60 * 60,
   })
 
+  user.jwt = token
+
+  await user.save()
+
   return res
     .status(200)
     .send({ token, username: user?.username, name: user?.name })
