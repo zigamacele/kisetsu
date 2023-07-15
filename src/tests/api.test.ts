@@ -310,6 +310,99 @@ describe('anime creation', () => {
   })
 })
 
+describe('update existing anime', () => {
+  test('updating users anime succeeds', async () => {
+    const body = {
+      airDate:
+        'Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      numOfEpisodes: 12,
+    }
+
+    const user = await User.findOne({ username: 'root' })
+
+    const anime = await Anime.findOne({ name: 'Test' })
+
+    const result = await api
+      .put('/anime/update/' + anime?._id.toString())
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const animeAfter = await Anime.findOne({ name: 'Test' })
+
+    expect(animeAfter?.numOfEpisodes).toBe(12)
+
+    expect(result.body.info).toContain('was updated')
+  })
+
+  test('updating users anime fails without body', async () => {
+    const body = {}
+
+    const user = await User.findOne({ username: 'root' })
+
+    const anime = await Anime.findOne({ name: 'Test' })
+
+    const result = await api
+      .put('/anime/update/' + anime?._id.toString())
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const animeAfter = await Anime.findOne({ name: 'Test' })
+
+    expect(animeAfter?.numOfEpisodes).toBe(anime?.numOfEpisodes)
+
+    expect(result.body.error).toContain('Nothing to update')
+  })
+
+  test('updating users anime fails with wrong id', async () => {
+    const body = {
+      airDate:
+        'Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      numOfEpisodes: 12,
+    }
+
+    const user = await User.findOne({ username: 'root' })
+
+    const wrongId = '64b2b3aec6d9680ffff23cbd'
+
+    const result = await api
+      .put('/anime/update/' + wrongId)
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(404)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Anime not found')
+  })
+
+  test('updating anoter users anime fails', async () => {
+    const body = {
+      airDate:
+        'Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      numOfEpisodes: 12,
+    }
+
+    const user = await User.findOne({ username: 'root' })
+    const anime = await Anime.findOne({ name: 'AlreadyExists' })
+
+    const result = await api
+      .put('/anime/update/' + anime?._id.toString())
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(403)
+      .expect('Content-Type', /application\/json/)
+
+    const animeAfter = await Anime.findOne({ name: 'AlreadyExists' })
+
+    expect(animeAfter?.numOfEpisodes).toBe(anime?.numOfEpisodes)
+
+    expect(result.body.error).toContain('not the owner of this anime')
+  })
+})
+
 describe('authorization middleware', () => {
   test('request to /login succeeds without authorization header', async () => {
     const user = {

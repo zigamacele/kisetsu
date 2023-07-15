@@ -60,7 +60,7 @@ animeRouter.post(
   }
 )
 
-animeRouter.post(
+animeRouter.put(
   '/update/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -93,7 +93,7 @@ animeRouter.post(
       if (user?._id.toString() !== anime.owner) {
         return res
           .status(403)
-          .json({ error: 'You are not the creator of this anime!' })
+          .json({ error: 'You are not the owner of this anime!' })
       }
     } catch (error) {
       return next(error)
