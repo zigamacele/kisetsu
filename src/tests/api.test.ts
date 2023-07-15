@@ -3,17 +3,19 @@ import supertest from 'supertest'
 import app from '../app'
 import User from '../models/user'
 
-import { usersInDB } from './test_helpers'
+import { animeInDB, usersInDB } from './test_helpers'
 import mongoose from 'mongoose'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { config } from '../utils/config'
 import dayjs from 'dayjs'
+import Anime from '../models/anime'
 
 const api = supertest(app)
 
 describe('user registration', () => {
   beforeEach(async () => {
     await User.deleteMany({})
+    await Anime.deleteMany({})
 
     const passwordHash = await bcrypt.hash('secret', 10)
     const user = new User({ username: 'root', passwordHash })
@@ -151,14 +153,14 @@ describe('user registration', () => {
 
 describe('user login', () => {
   test('logging in with correct credentials succeeds', async () => {
-    const newUser = {
+    const user = {
       username: 'root',
       password: 'secret',
     }
 
     const result = await api
       .post('/login')
-      .send(newUser)
+      .send(user)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -166,14 +168,14 @@ describe('user login', () => {
   })
 
   test('logging in with invalid credentials fails', async () => {
-    const newUser = {
+    const user = {
       username: 'root',
       password: 'notsecret',
     }
 
     const result = await api
       .post('/login')
-      .send(newUser)
+      .send(user)
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
@@ -181,13 +183,13 @@ describe('user login', () => {
   })
 
   test('logging in without username fails', async () => {
-    const newUser = {
+    const user = {
       password: 'secret',
     }
 
     const result = await api
       .post('/login')
-      .send(newUser)
+      .send(user)
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
@@ -196,13 +198,13 @@ describe('user login', () => {
   })
 
   test('logging in without password fails', async () => {
-    const newUser = {
+    const user = {
       username: 'root',
     }
 
     const result = await api
       .post('/login')
-      .send(newUser)
+      .send(user)
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
@@ -220,6 +222,87 @@ test('logged user has valid jwt token in document', async () => {
     ) as JwtPayload
     expect(decodedToken.exp).toBeGreaterThanOrEqual(dayjs().unix())
   }
+})
+
+describe('authorization middleware', () => {
+  test('requests to login succeeds without authorization header', async () => {
+    const user = {
+      username: 'root',
+      password: 'secret',
+    }
+
+    const result = await api
+      .post('/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.token).toBeDefined()
+  })
+
+  test('requests to /anime/create succeeds with valid authorization header', async () => {
+    const body = {
+      name: 'Test2',
+      airDate: '10.03.2021',
+      numOfEpisodes: 24,
+    }
+
+    const user = await User.findOne({ username: 'root' })
+
+    await api
+      .post('/anime/create')
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('requests to /anime/create fails with token not belonging to any user', async () => {
+    const body = {
+      name: 'Test',
+      airDate: '10.03.2021',
+      numOfEpisodes: 24,
+    }
+
+    const invalidToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YjI2NGMwMjFiOGZlOThmNWNiNTNhMCIsImlhdCI6MTY4OTQxMjgwMCwiZXhwIjoxNjg5NDEyODAxfQ.1k6-AN4F0WbZ2vX8lxIL6ezF05vaO-8himgrv92WscQ'
+
+    const result = await api
+      .post('/anime/create')
+      .set('Authorization', invalidToken)
+      .send(body)
+      .expect(403)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Please login')
+  })
+
+  test('requests to /anime/create fails with expired token', async () => {
+    const user = await User.findOne({ username: 'root' })
+
+    const body = {
+      name: 'Test',
+      airDate: '10.03.2021',
+      numOfEpisodes: 24,
+    }
+
+    const expiredToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YjI2NGMwMjFiOGZlOThmNWNiNTNhMCIsImlhdCI6MTY4OTQxMjgwMCwiZXhwIjoxNjg5NDEyODAxfQ.1k6-AN4F0WbZ2vX8lxIL6ezF05vaO-8himgrv92WscQ'
+
+    if (user) {
+      user.jwt = expiredToken
+      await user?.save()
+    }
+
+    const result = await api
+      .post('/anime/create')
+      .set('Authorization', expiredToken)
+      .send(body)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('token expired')
+  })
 })
 
 afterAll(async () => {

@@ -14,7 +14,6 @@ export const checkAuthorizationHeader = async (
   }
 
   const user = await User.findOne({ jwt: request.headers.authorization })
-
   if (user) {
     const decodedToken = jwt.verify(
       user.jwt ?? '',
