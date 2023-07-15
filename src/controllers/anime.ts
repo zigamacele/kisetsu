@@ -1,6 +1,14 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import Anime from '../models/anime'
 import User from '../models/user'
+import {
+  BadRequestErrorResponse,
+  CustomErrorResponse,
+  CustomSuccessfulResponse,
+  ForbiddenErrorResponse,
+  NotFoundErrorResponse,
+  SuccessfulyCreatedResponse,
+} from '../utils/responseTypes'
 
 export const animeRouter = Router()
 
@@ -30,7 +38,7 @@ animeRouter.post(
         await user?.save()
       }
 
-      res.status(201).json(savedAnime)
+      return SuccessfulyCreatedResponse(res, savedAnime)
     } catch (error) {
       console.error(error)
 
@@ -43,13 +51,13 @@ animeRouter.post(
 
           await user?.save()
 
-          return res.status(201).json({
+          return CustomSuccessfulResponse(res, {
             info: 'Anime successfully added!',
             name,
           })
         }
 
-        return res.status(400).json({
+        return CustomErrorResponse(res, {
           error: 'This anime is already in your list!',
           name,
         })
@@ -76,24 +84,23 @@ animeRouter.put(
         numOfEpisodes && (anime.numOfEpisodes = numOfEpisodes)
 
         if (!airDate && !numOfEpisodes) {
-          return res.status(400).json({ error: 'Nothing to update!' })
+          return BadRequestErrorResponse(res)
         }
 
         await anime.save()
 
-        return res
-          .status(200)
-          .json({ info: `${anime.name} was updated!`, anime })
+        return CustomSuccessfulResponse(res, {
+          info: `${anime.name} was updated!`,
+          anime,
+        })
       }
 
       if (!anime) {
-        return res.status(404).json({ error: 'Anime not found!' })
+        return NotFoundErrorResponse(res)
       }
 
       if (user?._id.toString() !== anime.owner) {
-        return res
-          .status(403)
-          .json({ error: 'You are not the owner of this anime!' })
+        return ForbiddenErrorResponse(res)
       }
     } catch (error) {
       return next(error)
@@ -120,17 +127,17 @@ animeRouter.delete(
 
         await user?.save()
 
-        return res.status(200).json({ info: `${anime.name} was deleted!` })
+        return CustomSuccessfulResponse(res, {
+          info: `${anime.name} was deleted!`,
+        })
       }
 
       if (!anime) {
-        return res.status(404).json({ error: 'Anime not found!' })
+        return NotFoundErrorResponse(res)
       }
 
       if (user?._id.toString() !== anime.owner) {
-        return res
-          .status(403)
-          .json({ error: 'You are not the owner of this anime!' })
+        return ForbiddenErrorResponse(res)
       }
     } catch (error) {
       return next(error)

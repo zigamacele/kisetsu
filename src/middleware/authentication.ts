@@ -3,17 +3,21 @@ import User from '../models/user'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { config } from '../utils/config'
 import dayjs from 'dayjs'
+import {
+  AuthFailedErrorResponse,
+  ForbiddenErrorResponse,
+} from '../utils/responseTypes'
 
 export const checkAuthorizationHeader = async (
-  request: Request,
-  response: Response,
+  req: Request,
+  res: Response,
   next: NextFunction
 ) => {
-  if (!request.headers.authorization) {
-    return response.status(403).json({ error: 'No credentials sent!' })
+  if (!req.headers.authorization) {
+    return ForbiddenErrorResponse(res)
   }
 
-  const user = await User.findOne({ jwt: request.headers.authorization })
+  const user = await User.findOne({ jwt: req.headers.authorization })
   if (user) {
     const decodedToken = jwt.verify(
       user.jwt ?? '',
@@ -24,10 +28,8 @@ export const checkAuthorizationHeader = async (
       return next()
     }
 
-    return response.status(401).json({
-      error: 'Token expired!',
-    })
+    return AuthFailedErrorResponse(res)
   }
 
-  return response.status(403).json({ error: 'Please login!' })
+  return ForbiddenErrorResponse(res)
 }

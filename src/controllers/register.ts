@@ -1,6 +1,11 @@
 import bcrypt from 'bcrypt'
 import { NextFunction, Request, Response, Router } from 'express'
 import User from '../models/user'
+import {
+  CustomErrorResponse,
+  MissingErrorResponse,
+  SuccessfulyCreatedResponse,
+} from '../utils/responseTypes'
 
 export const registerRouter = Router()
 
@@ -11,12 +16,12 @@ registerRouter.post(
       const { username, name, password } = req.body
 
       if (!password) {
-        res.status(400).json({ error: 'Password is required' })
+        MissingErrorResponse(res, 'Password')
       }
       if (password.length < 8)
-        res
-          .status(400)
-          .json({ error: 'Password must be at least 8 characters long' })
+        CustomErrorResponse(res, {
+          error: 'Password must be at least 8 characters long',
+        })
 
       const saltRounds = 10
       const passwordHash = await bcrypt.hash(password, saltRounds)
@@ -29,7 +34,7 @@ registerRouter.post(
 
       const savedUser = await user.save()
 
-      res.status(201).json(savedUser)
+      SuccessfulyCreatedResponse(res, savedUser)
     } catch (error) {
       console.error(error)
 

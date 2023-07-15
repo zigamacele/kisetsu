@@ -199,7 +199,7 @@ describe('user login', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('invalid username or password')
+    expect(result.body.error).toContain('Auth failed')
     expect(result.body.token).toBeUndefined()
   })
 
@@ -214,7 +214,7 @@ describe('user login', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('invalid username or password')
+    expect(result.body.error).toContain('Auth failed')
     expect(result.body.token).toBeUndefined()
   })
 })
@@ -271,7 +271,7 @@ describe('anime creation', () => {
       .post('/anime/create')
       .set('Authorization', user?.jwt as string)
       .send(body)
-      .expect(201)
+      .expect(200)
       .expect('Content-Type', /application\/json/)
 
     const userAfter = await User.findOne({ username: 'root' })
@@ -354,7 +354,7 @@ describe('update existing anime', () => {
 
     expect(animeAfter?.numOfEpisodes).toBe(anime?.numOfEpisodes)
 
-    expect(result.body.error).toContain('Nothing to update')
+    expect(result.body.error).toContain('Bad request')
   })
 
   test('updating users anime fails with wrong id', async () => {
@@ -375,7 +375,7 @@ describe('update existing anime', () => {
       .expect(404)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('Anime not found')
+    expect(result.body.error).toContain('Not found')
   })
 
   test('updating anoter users anime fails', async () => {
@@ -399,7 +399,7 @@ describe('update existing anime', () => {
 
     expect(animeAfter?.numOfEpisodes).toBe(anime?.numOfEpisodes)
 
-    expect(result.body.error).toContain('not the owner of this anime')
+    expect(result.body.error).toContain('Insufficient permissions')
   })
 })
 
@@ -436,7 +436,7 @@ describe('delete existing anime', () => {
       .expect(404)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('Anime not found')
+    expect(result.body.error).toContain('Not found')
   })
 
   test('deleting anoter users anime fails', async () => {
@@ -453,7 +453,7 @@ describe('delete existing anime', () => {
 
     expect(!!animeAfter).toBe(true)
 
-    expect(result.body.error).toContain('not the owner of this anime')
+    expect(result.body.error).toContain('Insufficient permissions')
   })
 })
 
@@ -507,7 +507,7 @@ describe('authorization middleware', () => {
       .expect(403)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('Please login')
+    expect(result.body.error).toContain('Insufficient permissions')
   })
 
   test('request to /anime/create fails with expired token', async () => {
@@ -534,7 +534,7 @@ describe('authorization middleware', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('token expired')
+    expect(result.body.error).toContain('Auth failed')
   })
 })
 

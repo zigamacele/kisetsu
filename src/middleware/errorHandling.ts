@@ -1,28 +1,31 @@
 import { NextFunction, Request, Response } from 'express'
 import { logger } from '../utils/logger'
+import {
+  AuthFailedErrorResponse,
+  CustomErrorResponse,
+  UnknownEndpointErrorResponse,
+} from '../utils/responseTypes'
 
-export const unknownEndpoint = (_request: Request, response: Response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
+export const unknownEndpoint = (_req: Request, res: Response) => {
+  UnknownEndpointErrorResponse(res)
 }
 
 export const errorHandler = (
   error: Error,
-  _request: Request,
-  response: Response,
+  _req: Request,
+  res: Response,
   next: NextFunction
 ) => {
   logger.error(error.message)
 
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
+    return CustomErrorResponse(res, { error: 'Malformatted Id.' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+    return CustomErrorResponse(res, { error: error.message })
   } else if (error.name === 'JsonWebTokenError') {
-    return response.status(400).json({ error: error.message })
+    return CustomErrorResponse(res, { error: error.message })
   } else if (error.name === 'TokenExpiredError') {
-    return response.status(401).json({
-      error: 'token expired',
-    })
+    return AuthFailedErrorResponse(res)
   }
 
   return next(error)

@@ -4,6 +4,10 @@ import User from '../models/user'
 import jwt from 'jsonwebtoken'
 import { config } from '../utils/config'
 import { logger } from '../utils/logger'
+import {
+  AuthFailedErrorResponse,
+  CustomSuccessfulResponse,
+} from '../utils/responseTypes'
 
 export const loginRouter = Router()
 
@@ -13,7 +17,7 @@ loginRouter.post(
     try {
       const { username, password } = req.body
       if (!password) {
-        res.status(401).json({ error: 'invalid username or password' })
+        return AuthFailedErrorResponse(res)
       }
       const user = await User.findOne({ username })
       const isPasswordCorrect =
@@ -22,9 +26,7 @@ loginRouter.post(
           : await bcrypt.compare(password, user?.passwordHash)
 
       if (!(user && isPasswordCorrect)) {
-        return res.status(401).json({
-          error: 'invalid username or password',
-        })
+        return AuthFailedErrorResponse(res)
       }
 
       const userForToken = {
@@ -40,9 +42,11 @@ loginRouter.post(
 
       await user.save()
 
-      return res
-        .status(200)
-        .send({ token, username: user?.username, name: user?.name })
+      return CustomSuccessfulResponse(res, {
+        token,
+        username: user?.username,
+        name: user?.name,
+      })
     } catch (error) {
       logger.error(error)
 
