@@ -403,6 +403,60 @@ describe('update existing anime', () => {
   })
 })
 
+describe('delete existing anime', () => {
+  test('deleting users anime succeeds', async () => {
+    const user = await User.findOne({ username: 'root' })
+
+    const anime = await Anime.findOne({ name: 'Test' })
+
+    const result = await api
+      .delete('/anime/delete/' + anime?._id.toString())
+      .set('Authorization', user?.jwt as string)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const animeAfter = await Anime.findOne({ name: 'Test' })
+    const userAfter = await User.findOne({ username: 'root' })
+
+    expect(animeAfter).toBe(null)
+
+    expect(userAfter?.animeList).not.toHaveProperty('Test')
+
+    expect(result.body.info).toContain('was deleted')
+  })
+
+  test('updating users anime fails with wrong id', async () => {
+    const user = await User.findOne({ username: 'root' })
+
+    const wrongId = '64b2b3aec6d9680ffff23cbd'
+
+    const result = await api
+      .delete('/anime/delete/' + wrongId)
+      .set('Authorization', user?.jwt as string)
+      .expect(404)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Anime not found')
+  })
+
+  test('deleting anoter users anime fails', async () => {
+    const user = await User.findOne({ username: 'root' })
+    const anime = await Anime.findOne({ name: 'AlreadyExists' })
+
+    const result = await api
+      .delete('/anime/delete/' + anime?._id.toString())
+      .set('Authorization', user?.jwt as string)
+      .expect(403)
+      .expect('Content-Type', /application\/json/)
+
+    const animeAfter = await Anime.findOne({ name: 'AlreadyExists' })
+
+    expect(!!animeAfter).toBe(true)
+
+    expect(result.body.error).toContain('not the owner of this anime')
+  })
+})
+
 describe('authorization middleware', () => {
   test('request to /login succeeds without authorization header', async () => {
     const user = {

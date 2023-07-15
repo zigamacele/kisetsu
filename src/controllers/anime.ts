@@ -100,3 +100,40 @@ animeRouter.put(
     }
   }
 )
+
+animeRouter.delete(
+  '/delete/:id',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params
+      const { authorization } = req.headers
+
+      const user = await User.findOne({ jwt: authorization })
+      const anime = await Anime.findOne({ _id: id })
+
+      if (anime && user?._id.toString() === anime.owner) {
+        const updatedAnimeList = { ...user.animeList }
+        delete updatedAnimeList[anime.name]
+        user.animeList = updatedAnimeList
+
+        await Anime.deleteOne({ _id: anime._id })
+
+        await user?.save()
+
+        return res.status(200).json({ info: `${anime.name} was deleted!` })
+      }
+
+      if (!anime) {
+        return res.status(404).json({ error: 'Anime not found!' })
+      }
+
+      if (user?._id.toString() !== anime.owner) {
+        return res
+          .status(403)
+          .json({ error: 'You are not the owner of this anime!' })
+      }
+    } catch (error) {
+      return next(error)
+    }
+  }
+)
