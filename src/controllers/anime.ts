@@ -59,3 +59,44 @@ animeRouter.post(
     }
   }
 )
+
+animeRouter.post(
+  '/update/:id',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params
+      const { airDate, numOfEpisodes } = req.body
+      const { authorization } = req.headers
+
+      const user = await User.findOne({ jwt: authorization })
+      const anime = await Anime.findOne({ _id: id })
+
+      if (anime && user?._id.toString() === anime.owner) {
+        airDate && (anime.airDate = airDate)
+        numOfEpisodes && (anime.numOfEpisodes = numOfEpisodes)
+
+        if (!airDate && !numOfEpisodes) {
+          return res.status(400).json({ error: 'Nothing to update!' })
+        }
+
+        await anime.save()
+
+        return res
+          .status(200)
+          .json({ info: `${anime.name} was updated!`, anime })
+      }
+
+      if (!anime) {
+        return res.status(404).json({ error: 'Anime not found!' })
+      }
+
+      if (user?._id.toString() !== anime.owner) {
+        return res
+          .status(403)
+          .json({ error: 'You are not the creator of this anime!' })
+      }
+    } catch (error) {
+      return next(error)
+    }
+  }
+)
