@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 
 interface UserSchema {
@@ -6,19 +6,24 @@ interface UserSchema {
   name: string
   passwordHash: string
   jwt: string | null
+  animeList: { [key: string]: string | number }
 }
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    minlength: 3,
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      minlength: 3,
+    },
+    name: String,
+    passwordHash: { type: String, required: true, minlength: 8 },
+    jwt: { default: null, type: String },
+    animeList: { type: Schema.Types.Mixed, default: {} },
   },
-  name: String,
-  passwordHash: { type: String, required: true, minlength: 8 },
-  jwt: { default: null, type: String },
-})
+  { minimize: false }
+)
 
 userSchema.plugin(uniqueValidator)
 

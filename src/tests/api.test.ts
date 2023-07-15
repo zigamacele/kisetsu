@@ -20,6 +20,12 @@ describe('user registration', () => {
     const passwordHash = await bcrypt.hash('secret', 10)
     const user = new User({ username: 'root', passwordHash })
     await user.save()
+
+    const anime = new Anime({
+      name: 'AlreadyExists',
+      airDate: '10.03.2021',
+    })
+    await anime.save()
   })
 
   test('creation succeeds with fresh username', async () => {
@@ -224,8 +230,88 @@ test('logged user has valid jwt token in document', async () => {
   }
 })
 
+describe('anime creation', () => {
+  test('creation of new anime succeeds', async () => {
+    const animeAtStart = await animeInDB()
+    const body = {
+      name: 'Test',
+      airDate: '10.03.2021',
+      numOfEpisodes: 24,
+    }
+
+    const userBefore = await User.findOne({ username: 'root' })
+
+    await api
+      .post('/anime/create')
+      .set('Authorization', userBefore?.jwt as string)
+      .send(body)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const userAfter = await User.findOne({ username: 'root' })
+
+    const animeAtEnd = await animeInDB()
+
+    expect(userAfter?.animeList).toHaveProperty('Test')
+
+    expect(animeAtEnd).toHaveLength(animeAtStart.length + 1)
+  })
+
+  test('creation of anime already in database, adds alrady existing anime to user document', async () => {
+    const animeAtStart = await animeInDB()
+    const body = {
+      name: 'AlreadyExists',
+      airDate: '10.03.2021',
+      numOfEpisodes: 24,
+    }
+
+    const user = await User.findOne({ username: 'root' })
+
+    await api
+      .post('/anime/create')
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const userAfter = await User.findOne({ username: 'root' })
+
+    const animeAtEnd = await animeInDB()
+
+    expect(userAfter?.animeList).toHaveProperty('AlreadyExists')
+
+    expect(animeAtEnd).toHaveLength(animeAtStart.length)
+  })
+
+  test('creation of anime already in users document fails', async () => {
+    const animeAtStart = await animeInDB()
+    const body = {
+      name: 'AlreadyExists',
+      airDate: '10.03.2021',
+      numOfEpisodes: 24,
+    }
+
+    const user = await User.findOne({ username: 'root' })
+
+    const result = await api
+      .post('/anime/create')
+      .set('Authorization', user?.jwt as string)
+      .send(body)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const animeAtEnd = await animeInDB()
+
+    expect(user?.animeList).toHaveProperty('AlreadyExists')
+
+    expect(result.body.error).toContain('anime is already in your list')
+
+    expect(animeAtEnd).toHaveLength(animeAtStart.length)
+  })
+})
+
 describe('authorization middleware', () => {
-  test('requests to login succeeds without authorization header', async () => {
+  test('request to /login succeeds without authorization header', async () => {
     const user = {
       username: 'root',
       password: 'secret',
@@ -240,7 +326,7 @@ describe('authorization middleware', () => {
     expect(result.body.token).toBeDefined()
   })
 
-  test('requests to /anime/create succeeds with valid authorization header', async () => {
+  test('request to /anime/create succeeds with valid authorization header', async () => {
     const body = {
       name: 'Test2',
       airDate: '10.03.2021',
@@ -257,7 +343,7 @@ describe('authorization middleware', () => {
       .expect('Content-Type', /application\/json/)
   })
 
-  test('requests to /anime/create fails with token not belonging to any user', async () => {
+  test('request to /anime/create fails with token not belonging to any user', async () => {
     const body = {
       name: 'Test',
       airDate: '10.03.2021',
@@ -277,7 +363,7 @@ describe('authorization middleware', () => {
     expect(result.body.error).toContain('Please login')
   })
 
-  test('requests to /anime/create fails with expired token', async () => {
+  test('request to /anime/create fails with expired token', async () => {
     const user = await User.findOne({ username: 'root' })
 
     const body = {

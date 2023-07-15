@@ -5,6 +5,7 @@ interface AnimeSchema {
   name: string
   airDate: Date
   numOfEpisodes: number
+  owner: string
 }
 
 const animeSchema = new mongoose.Schema({
@@ -15,6 +16,7 @@ const animeSchema = new mongoose.Schema({
   },
   airDate: { type: Date, required: true },
   numOfEpisodes: { type: Number, default: 0 },
+  owner: { type: String },
 })
 
 animeSchema.plugin(uniqueValidator)
