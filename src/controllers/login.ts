@@ -3,6 +3,7 @@ import { NextFunction, Request, Response, Router } from 'express'
 import User from '../models/user'
 import jwt from 'jsonwebtoken'
 import { config } from '../utils/config'
+import { logger } from '../utils/logger'
 
 export const loginRouter = Router()
 
@@ -43,7 +44,7 @@ loginRouter.post(
         .status(200)
         .send({ token, username: user?.username, name: user?.name })
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       return next(error)
     }

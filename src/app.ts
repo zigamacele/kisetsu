@@ -8,6 +8,7 @@ import { logger } from './utils/logger'
 import 'express-async-errors'
 import { loginRouter } from './controllers/login'
 import { animeRouter } from './controllers/anime'
+import { checkAuthorizationHeader } from './middleware/authentication'
 
 const app = express()
 
@@ -28,6 +29,9 @@ app.use(express.json())
 
 app.use('/register', registerRouter)
 app.use('/login', loginRouter)
+
+app.use(checkAuthorizationHeader)
+
 app.use('/anime', animeRouter)
 
 app.use(unknownEndpoint)

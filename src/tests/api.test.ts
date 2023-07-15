@@ -5,8 +5,9 @@ import User from '../models/user'
 
 import { usersInDB } from './test_helpers'
 import mongoose from 'mongoose'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { config } from '../utils/config'
+import dayjs from 'dayjs'
 
 const api = supertest(app)
 
@@ -161,8 +162,6 @@ describe('user login', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    console.log(result)
-
     expect(result.body.token).toBeDefined()
   })
 
@@ -178,8 +177,6 @@ describe('user login', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    console.log(result)
-
     expect(result.body.token).toBeUndefined()
   })
 
@@ -193,8 +190,6 @@ describe('user login', () => {
       .send(newUser)
       .expect(401)
       .expect('Content-Type', /application\/json/)
-
-    console.log(result)
 
     expect(result.body.error).toContain('invalid username or password')
     expect(result.body.token).toBeUndefined()
@@ -216,21 +211,14 @@ describe('user login', () => {
   })
 })
 
-interface JwyPayload {
-  username: string
-  id: string
-  iat: number
-  exp: number
-}
-
 test('logged user has valid jwt token in document', async () => {
   const user = await User.findOne({ username: 'root' })
   if (user && user.jwt) {
     const decodedToken = jwt.verify(
       user.jwt,
       config.database['SECRET']
-    ) as JwyPayload
-    expect(decodedToken.exp).toBeGreaterThanOrEqual(Date.now() / 1000)
+    ) as JwtPayload
+    expect(decodedToken.exp).toBeGreaterThanOrEqual(dayjs().unix())
   }
 })
 
