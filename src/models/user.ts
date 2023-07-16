@@ -6,7 +6,7 @@ interface UserSchema {
   name: string
   passwordHash: string
   jwt: string | null
-  animeList: { [key: string]: string | number }
+  animeList: { [key: string]: { progress: number } }
 }
 
 const userSchema = new mongoose.Schema(

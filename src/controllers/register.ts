@@ -19,7 +19,7 @@ registerRouter.post(
         MissingErrorResponse(res, 'Password')
       }
       if (password.length < 8)
-        CustomErrorResponse(res, {
+        return CustomErrorResponse(res, {
           error: 'Password must be at least 8 characters long',
         })
 
@@ -34,11 +34,11 @@ registerRouter.post(
 
       const savedUser = await user.save()
 
-      SuccessfulyCreatedResponse(res, savedUser)
+      return SuccessfulyCreatedResponse(res, savedUser)
     } catch (error) {
       console.error(error)
 
-      next(error)
+      return next(error)
     }
   }
 )

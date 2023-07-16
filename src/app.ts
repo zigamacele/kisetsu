@@ -9,6 +9,7 @@ import { logger } from './utils/logger'
 import { loginRouter } from './controllers/login'
 import { animeRouter } from './controllers/anime'
 import { checkAuthorizationHeader } from './middleware/authentication'
+import { userRouter } from './controllers/user'
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use('/login', loginRouter)
 app.use(checkAuthorizationHeader)
 
 app.use('/anime', animeRouter)
+app.use('/user', userRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
