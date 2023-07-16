@@ -18,7 +18,11 @@ describe('user registration', () => {
     await Anime.deleteMany({})
 
     const passwordHash = await bcrypt.hash('secret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const user = new User({
+      username: 'root',
+      passwordHash,
+      animeList: { AnotherAnime: { progress: 0 } },
+    })
     await user.save()
 
     const anime = new Anime({
@@ -26,6 +30,15 @@ describe('user registration', () => {
       airDate: '10.03.2021',
     })
     await anime.save()
+
+    const userRoot = await User.findOne({ username: 'root' })
+    const anotherAnime = new Anime({
+      name: 'AnotherAnime',
+      airDate: '10.03.2021',
+      owner: userRoot?._id,
+    })
+
+    await anotherAnime.save()
   })
 
   test('creation succeeds with fresh username', async () => {
@@ -400,6 +413,134 @@ describe('update existing anime', () => {
     expect(animeAfter?.numOfEpisodes).toBe(anime?.numOfEpisodes)
 
     expect(result.body.error).toContain('Insufficient permissions')
+  })
+})
+
+describe('user endpoint', () => {
+  describe('getting users list', () => {
+    test('succeeds with valid authorization header', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      const result = await api
+        .get('/user/list')
+        .set('Authorization', user?.jwt as string)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      expect(result.body).toEqual(user?.animeList)
+    })
+
+    test('fails without valid authorization header', async () => {
+      const invalidToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YjI2NGMwMjFiOGZlOThmNWNiNTNhMCIsImlhdCI6MTY4OTQxMjgwMCwiZXhwIjoxNjg5NDEyODAxfQ.1k6-AN4F0WbZ2vX8lxIL6ezF05vaO-8himgrv92WscQ'
+
+      await api
+        .get('/user/list')
+        .set('Authorization', invalidToken)
+        .expect(403)
+        .expect('Content-Type', /application\/json/)
+    })
+  })
+
+  describe('getting specific anime from users list', () => {
+    test('succeeds with valid authorization header & id', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      await api
+        .get('/user/list/' + 'Test')
+        .set('Authorization', user?.jwt as string)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+    })
+  })
+
+  test('fails with id that doesnt exist', async () => {
+    const user = await User.findOne({ username: 'root' })
+
+    await api
+      .get('/user/list/' + 'DoesntExist')
+      .set('Authorization', user?.jwt as string)
+      .expect(404)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('fails if provided authorization header doesnt belong to any user', async () => {
+    const invalidToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YjI2NGMwMjFiOGZlOThmNWNiNTNhMCIsImlhdCI6MTY4OTQxMjgwMCwiZXhwIjoxNjg5NDEyODAxfQ.1k6-AN4F0WbZ2vX8lxIL6ezF05vaO-8himgrv92WscQ'
+
+    await api
+      .get('/user/list/' + 'Test')
+      .set('Authorization', invalidToken)
+      .expect(403)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  describe('updating specific anime from users list', () => {
+    test('succeeds with valid authorization header & id & body', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      const body = {
+        progress: 5,
+      }
+      await api
+        .put('/user/list/' + 'Test')
+        .set('Authorization', user?.jwt as string)
+        .send(body)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      const userAfter = await User.findOne({ username: 'root' })
+
+      userAfter?.animeList['Test'] &&
+        expect(userAfter.animeList['Test'].progress).toBe(5)
+    })
+
+    test('fails without sending body', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      await api
+        .put('/user/list/' + 'Test')
+        .set('Authorization', user?.jwt as string)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+    })
+
+    test('fails with non-existent id', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      await api
+        .put('/user/list/' + 'DoesntExist')
+        .set('Authorization', user?.jwt as string)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+    })
+  })
+
+  describe('deleting specific anime from users list', () => {
+    test('succeeds with valid authorization header & id', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      expect(user?.animeList).toHaveProperty('AnotherAnime')
+
+      await api
+        .delete('/user/list/' + 'AnotherAnime')
+        .set('Authorization', user?.jwt as string)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      const userAfter = await User.findOne({ username: 'root' })
+      expect(userAfter?.animeList).not.toHaveProperty('AnotherAnime')
+    })
+
+    test('fails with non-existent id', async () => {
+      const user = await User.findOne({ username: 'root' })
+
+      await api
+        .delete('/user/list/' + 'DoesntExist')
+        .set('Authorization', user?.jwt as string)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+    })
   })
 })
 

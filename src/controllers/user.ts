@@ -36,7 +36,7 @@ userRouter.get(
       const { authorization } = req.headers
       const user = await User.findOne({ jwt: authorization })
 
-      if (!user) {
+      if (!user || (id && !user.animeList[id])) {
         return NotFoundErrorResponse(res)
       }
 
@@ -44,7 +44,7 @@ userRouter.get(
         return BadRequestErrorResponse(res)
       }
 
-      return CustomSuccessfulResponse(res, id && user?.animeList[id])
+      return CustomSuccessfulResponse(res, { [id]: user?.animeList[id] })
     } catch (error) {
       console.error(error)
 
@@ -62,7 +62,7 @@ userRouter.put(
       const { authorization } = req.headers
       const user = await User.findOne({ jwt: authorization })
 
-      if (user && id) {
+      if (user && progress && id && user.animeList[id]) {
         const updatedAnimeList = { ...user.animeList }
         updatedAnimeList[id] = { progress }
         user.animeList = updatedAnimeList
@@ -89,7 +89,7 @@ userRouter.delete(
       const { authorization } = req.headers
       const user = await User.findOne({ jwt: authorization })
 
-      if (user && id) {
+      if (user && id && user.animeList[id]) {
         const updatedAnimeList = { ...user.animeList }
         delete updatedAnimeList[id]
         user.animeList = updatedAnimeList
