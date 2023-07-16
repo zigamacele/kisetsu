@@ -7,7 +7,8 @@ import {
   CustomSuccessfulResponse,
   ForbiddenErrorResponse,
   NotFoundErrorResponse,
-  SuccessfulyCreatedResponse,
+  SuccessfullyCreatedResponse,
+  UnknownErrorResponse,
 } from '../utils/responseTypes'
 
 export const animeRouter = Router()
@@ -38,7 +39,7 @@ animeRouter.post(
         await user?.save()
       }
 
-      return SuccessfulyCreatedResponse(res, savedAnime)
+      return SuccessfullyCreatedResponse(res, savedAnime)
     } catch (error) {
       console.error(error)
 
@@ -108,39 +109,38 @@ animeRouter.put(
   }
 )
 
-animeRouter.delete(
-  '/delete/:id',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params
-      const { authorization } = req.headers
+animeRouter.delete('/delete/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { authorization } = req.headers
 
-      const user = await User.findOne({ jwt: authorization })
-      const anime = await Anime.findOne({ _id: id })
+    const user = await User.findOne({ jwt: authorization })
+    const anime = await Anime.findOne({ _id: id })
 
-      if (anime && user?._id.toString() === anime.owner) {
-        const updatedAnimeList = { ...user.animeList }
-        delete updatedAnimeList[anime.name]
-        user.animeList = updatedAnimeList
+    if (anime && user?._id.toString() === anime.owner) {
+      const updatedAnimeList = { ...user.animeList }
+      delete updatedAnimeList[anime.name]
+      user.animeList = updatedAnimeList
 
-        await Anime.deleteOne({ _id: anime._id })
+      await Anime.deleteOne({ _id: anime._id })
 
-        await user?.save()
+      await user?.save()
 
-        return CustomSuccessfulResponse(res, {
-          info: `${anime.name} was deleted!`,
-        })
-      }
-
-      if (!anime) {
-        return NotFoundErrorResponse(res)
-      }
-
-      if (user?._id.toString() !== anime.owner) {
-        return ForbiddenErrorResponse(res)
-      }
-    } catch (error) {
-      return next(error)
+      return CustomSuccessfulResponse(res, {
+        info: `${anime.name} was deleted!`,
+      })
     }
+
+    if (!anime) {
+      return NotFoundErrorResponse(res)
+    }
+
+    if (user?._id.toString() !== anime.owner) {
+      return ForbiddenErrorResponse(res)
+    }
+
+    return UnknownErrorResponse(res)
+  } catch {
+    return UnknownErrorResponse(res)
   }
-)
+})

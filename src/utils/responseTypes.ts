@@ -4,7 +4,7 @@ export const CustomSuccessfulResponse = <T>(res: Response, output: T) => {
   return res.status(200).send(output)
 }
 
-export const SuccessfulyCreatedResponse = <T>(res: Response, output: T) => {
+export const SuccessfullyCreatedResponse = <T>(res: Response, output: T) => {
   return res.status(201).send(output)
 }
 
@@ -14,6 +14,10 @@ export const MissingErrorResponse = (res: Response, missing: string) => {
 
 export const CustomErrorResponse = <T>(res: Response, output: T) => {
   return res.status(400).send(output)
+}
+
+export function UnknownErrorResponse(res: Response) {
+  return res.status(400).send({ error: 'Unknown error.' })
 }
 
 export function BadRequestErrorResponse(res: Response) {
