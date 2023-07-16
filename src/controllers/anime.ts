@@ -41,8 +41,6 @@ animeRouter.post(
 
       return SuccessfullyCreatedResponse(res, savedAnime)
     } catch (error) {
-      console.error(error)
-
       if ((error as Error).name === 'ValidationError') {
         if (user && !Object.keys(user?.animeList).includes(name)) {
           user.animeList = {

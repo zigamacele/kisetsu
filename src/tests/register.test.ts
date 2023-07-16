@@ -1,40 +1,13 @@
-import { usersInDB } from './test_helpers'
+import { databaseSetup, usersInDB } from './test_helpers'
 import supertest from 'supertest'
 import app from '../app'
 import mongoose from 'mongoose'
-import User from '../models/user'
-import Anime from '../models/anime'
-import bcrypt from 'bcrypt'
 
 const api = supertest(app)
 
 describe('user registration', () => {
   beforeEach(async () => {
-    await Anime.deleteMany({})
-    await User.deleteMany({})
-
-    const passwordHash = await bcrypt.hash('secret', 10)
-    const user = new User({
-      username: 'root',
-      passwordHash,
-      animeList: { AnotherAnime: { progress: 0 } },
-    })
-    await user.save()
-
-    const anime = new Anime({
-      name: 'AlreadyExists',
-      airDate: '10.03.2021',
-    })
-    await anime.save()
-
-    const userRoot = await User.findOne({ username: 'root' })
-    const anotherAnime = new Anime({
-      name: 'AnotherAnime',
-      airDate: '10.03.2021',
-      owner: userRoot?._id,
-    })
-
-    await anotherAnime.save()
+    await databaseSetup()
   })
 
   test('creation succeeds with fresh username', async () => {

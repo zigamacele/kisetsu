@@ -1,11 +1,8 @@
-import { animeInDB } from './test_helpers'
+import { animeInDB, databaseSetup } from './test_helpers'
 import User from '../models/user'
 import Anime from '../models/anime'
 import supertest from 'supertest'
 import app from '../app'
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import { config } from '../utils/config'
 import mongoose from 'mongoose'
 
 const api = supertest(app)
@@ -13,45 +10,7 @@ const api = supertest(app)
 describe('anime endpoint', () => {
   describe('anime creation', () => {
     beforeAll(async () => {
-      await Anime.deleteMany({})
-      await User.deleteMany({})
-
-      const passwordHash = await bcrypt.hash('secret', 10)
-      const user = new User({
-        username: 'root',
-        passwordHash,
-        animeList: { AnotherAnime: { progress: 0 } },
-      })
-      await user.save()
-
-      const anime = new Anime({
-        name: 'AlreadyExists',
-        airDate: '10.03.2021',
-      })
-      await anime.save()
-
-      const userRoot = await User.findOne({ username: 'root' })
-      const anotherAnime = new Anime({
-        name: 'AnotherAnime',
-        airDate: '10.03.2021',
-        owner: userRoot?._id,
-      })
-      await anotherAnime.save()
-
-      const userToken = await User.findOne({ username: 'root' })
-
-      const userForToken = {
-        username: userToken?.username,
-        id: userToken?._id,
-      }
-
-      if (userToken) {
-        userToken.jwt = jwt.sign(userForToken, config.database.SECRET, {
-          expiresIn: 60 * 60,
-        })
-
-        await userToken.save()
-      }
+      await databaseSetup()
     })
 
     test('creation of new anime succeeds', async () => {
