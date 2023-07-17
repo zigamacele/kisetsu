@@ -191,6 +191,29 @@ describe('delete existing anime', () => {
   })
 })
 
+describe('getting schedule for users anime', () => {
+  test('succeeds with valid authorization header', async () => {
+    const user = await User.findOne({ username: 'root' })
+
+    await api
+      .get('/user/schedule')
+      .set('Authorization', user?.jwt as string)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+})
+
+test('fails without valid authorization header', async () => {
+  const invalidToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0YjI2NGMwMjFiOGZlOThmNWNiNTNhMCIsImlhdCI6MTY4OTQxMjgwMCwiZXhwIjoxNjg5NDEyODAxfQ.1k6-AN4F0WbZ2vX8lxIL6ezF05vaO-8himgrv92WscQ'
+
+  await api
+    .get('/user/schedule')
+    .set('Authorization', invalidToken)
+    .expect(403)
+    .expect('Content-Type', /application\/json/)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

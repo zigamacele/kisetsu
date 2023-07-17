@@ -6,7 +6,11 @@ import {
   NotFoundErrorResponse,
   UnknownErrorResponse,
 } from '../utils/responseTypes'
-import { addAnimeInformationFromDB, AnimeList } from '../utils/moreInformation'
+import {
+  getAnimeInformationFromDB,
+  getScheduleInformation,
+  AnimeList,
+} from '../utils/timeDate'
 
 export const userRouter = Router()
 
@@ -21,7 +25,7 @@ userRouter.get('/list', async (req: Request, res: Response) => {
 
     return CustomSuccessfulResponse(
       res,
-      await addAnimeInformationFromDB(user.animeList)
+      await getAnimeInformationFromDB(user.animeList)
     )
   } catch {
     return UnknownErrorResponse(res)
@@ -44,7 +48,7 @@ userRouter.get('/list/:id', async (req: Request, res: Response) => {
 
     return CustomSuccessfulResponse(
       res,
-      await addAnimeInformationFromDB({ [id]: user.animeList[id] } as AnimeList)
+      await getAnimeInformationFromDB({ [id]: user.animeList[id] } as AnimeList)
     )
   } catch {
     return UnknownErrorResponse(res)
@@ -93,6 +97,24 @@ userRouter.delete('/list/:id', async (req: Request, res: Response) => {
     }
 
     return BadRequestErrorResponse(res)
+  } catch {
+    return UnknownErrorResponse(res)
+  }
+})
+
+userRouter.get('/schedule', async (req: Request, res: Response) => {
+  try {
+    const { authorization } = req.headers
+    const user = await User.findOne({ jwt: authorization })
+
+    if (!user) {
+      return NotFoundErrorResponse(res)
+    }
+
+    return CustomSuccessfulResponse(
+      res,
+      await getScheduleInformation(user.animeList)
+    )
   } catch {
     return UnknownErrorResponse(res)
   }
