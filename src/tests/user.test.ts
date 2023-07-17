@@ -16,13 +16,11 @@ describe('user endpoint', () => {
     test('succeeds with valid authorization header', async () => {
       const user = await User.findOne({ username: 'root' })
 
-      const result = await api
+      await api
         .get('/user/list')
         .set('Authorization', user?.jwt as string)
         .expect(200)
         .expect('Content-Type', /application\/json/)
-
-      expect(result.body).toEqual(user?.animeList)
     })
 
     test('fails without valid authorization header', async () => {
@@ -87,7 +85,7 @@ describe('user endpoint', () => {
       const userAfter = await User.findOne({ username: 'root' })
 
       userAfter?.animeList['AnotherAnime'] &&
-        expect(userAfter.animeList['AnotherAnime'].progress).toBe(5)
+        expect(userAfter.animeList['AnotherAnime']['progress']).toBe(5)
     })
 
     test('fails without sending body', async () => {

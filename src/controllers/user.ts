@@ -6,6 +6,7 @@ import {
   NotFoundErrorResponse,
   UnknownErrorResponse,
 } from '../utils/responseTypes'
+import { addAnimeInformationFromDB, AnimeList } from '../utils/moreInformation'
 
 export const userRouter = Router()
 
@@ -18,7 +19,10 @@ userRouter.get('/list', async (req: Request, res: Response) => {
       return NotFoundErrorResponse(res)
     }
 
-    return CustomSuccessfulResponse(res, user?.animeList)
+    return CustomSuccessfulResponse(
+      res,
+      await addAnimeInformationFromDB(user.animeList)
+    )
   } catch {
     return UnknownErrorResponse(res)
   }
@@ -38,7 +42,10 @@ userRouter.get('/list/:id', async (req: Request, res: Response) => {
       return BadRequestErrorResponse(res)
     }
 
-    return CustomSuccessfulResponse(res, { [id]: user?.animeList[id] })
+    return CustomSuccessfulResponse(
+      res,
+      await addAnimeInformationFromDB({ [id]: user.animeList[id] } as AnimeList)
+    )
   } catch {
     return UnknownErrorResponse(res)
   }

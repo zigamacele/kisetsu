@@ -1,12 +1,12 @@
 import mongoose, { Schema } from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 
-interface UserSchema {
+export interface UserSchema {
   username: string
   name: string
   passwordHash: string
   jwt: string | null
-  animeList: { [key: string]: { progress: number } }
+  animeList: { [key: string]: { [key: string]: number | string | Date } }
 }
 
 const userSchema = new mongoose.Schema(

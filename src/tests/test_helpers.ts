@@ -16,26 +16,16 @@ export const animeInDB = async () => {
   return anime.map((u) => u.toJSON())
 }
 
-export const initialUsers = async () => {
-  return [
-    {
-      username: 'root',
-
-      passwordHash: await bcrypt.hash('secret', 10),
-      jwt: null,
-      animeList: { AnotherAnime: { progress: 0 } },
-    },
-  ]
-}
-
 export const initialAnime = [
   {
     name: 'AlreadyExists',
     airDate: '10.03.2021',
+    numOfEpisodes: 12,
   },
   {
     name: 'AnotherAnime',
     airDate: '10.03.2021',
+    numOfEpisodes: 24,
     owner: null,
   },
 ]
