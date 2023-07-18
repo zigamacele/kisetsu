@@ -1,322 +1,257 @@
 {
-	"info": {
-		"_postman_id": "b1944693-8c6d-4248-adc6-c66d5783657e",
-		"name": "kisetsu",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "28495867"
-	},
-	"item": [
-		{
-			"name": "POST: /register",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"tester\",\n    \"name\":\"Tester\",\n    \"password\": \"zigamacele\"\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/register",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "POST: /login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"tester\",\n    \"password\": \"password\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "POST: /anime/create",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiNTUxYzM4NGE2NWZlZDcyNGU3Zjc1IiwiaWF0IjoxNjg5NjA0NTQ5LCJleHAiOjE2ODk2MDgxNDl9.AXAF_ttpx6omweL0xTd0T8xp5aoTqnWjfnKV-Qhmzcs",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Demon Slayer\", \n    \"airDate\": \"10.03.2023\", \n    \"numOfEpisodes\": 24\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/anime/create",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"anime",
-						"create"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "PUT: /anime/update/:id",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMmNlZGZmNDY3YzA2NzU0M2FlYTkzIiwiaWF0IjoxNjg5NDM5OTY5LCJleHAiOjE2ODk0NDM1Njl9.pLFicZj1fqcB4oodjeU-KgUt5o4ZNdLLEDgNRHpdmfg",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"airDate\": \"Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)\", \n    \"numOfEpisodes\": 12\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/anime/update/64b2cef1f467c067543aea9c",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"anime",
-						"update",
-						"64b2cef1f467c067543aea9c"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DELETE: /anime/delete/:id",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMmUzYzk4Y2Y0MDA5NzNlZjgwOTg0IiwiaWF0IjoxNjg5NDQ5MTU3LCJleHAiOjE2ODk0NTI3NTd9.Ys-MGRzMVPHchVnOLuiS0uQIILxg7ZXBgUCO1pHMLZU",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"airDate\": \"Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)\", \n    \"numOfEpisodes\": 12\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/anime/delete/64b2f4ebadbb4fab1b4f72c4",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"anime",
-						"delete",
-						"64b2f4ebadbb4fab1b4f72c4"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET: /user/list",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiNTUxYzM4NGE2NWZlZDcyNGU3Zjc1IiwiaWF0IjoxNjg5NjA0NTQ5LCJleHAiOjE2ODk2MDgxNDl9.AXAF_ttpx6omweL0xTd0T8xp5aoTqnWjfnKV-Qhmzcs",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"airDate\": \"Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)\", \n    \"numOfEpisodes\": 12\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/user/list",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"user",
-						"list"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET: /user/list/:id",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiNTUxYzM4NGE2NWZlZDcyNGU3Zjc1IiwiaWF0IjoxNjg5NjA0NTQ5LCJleHAiOjE2ODk2MDgxNDl9.AXAF_ttpx6omweL0xTd0T8xp5aoTqnWjfnKV-Qhmzcs",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"airDate\": \"Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)\", \n    \"numOfEpisodes\": 12\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/user/list/myAnime",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"user",
-						"list",
-						"myAnime"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "PUT: /user/list/:id",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMzhmYjg0NzBlNmNjZjNhMTY1YTk0IiwiaWF0IjoxNjg5NDk2NzAxLCJleHAiOjE2ODk1MDAzMDF9.Fk8Qy3jMjsvW1FqhmPNF0BYeOgTOBtSXou-EMkOz8_g",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"progress\": 4\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/user/list/myAnime",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"user",
-						"list",
-						"myAnime"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DELETE: /user/list/:id",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMzhmYjg0NzBlNmNjZjNhMTY1YTk0IiwiaWF0IjoxNjg5NDk2NzAxLCJleHAiOjE2ODk1MDAzMDF9.Fk8Qy3jMjsvW1FqhmPNF0BYeOgTOBtSXou-EMkOz8_g",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"progress\": 4\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/user/list/MyAnime",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"user",
-						"list",
-						"MyAnime"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "b1944693-8c6d-4248-adc6-c66d5783657e",
+    "name": "kisetsu",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28495867"
+  },
+  "item": [
+    {
+      "name": "POST: /register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"tester\",\n    \"name\":\"Tester\",\n    \"password\": \"password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST: /login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"tester\",\n    \"password\": \"password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST: /anime/create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjRiNTg5NGRlZjI5OWFiZDZjMjk0OWQ1IiwiaWF0IjoxNjg5NjE4NzY4LCJleHAiOjE2ODk2MjIzNjh9.YEqwaRyJzka2CxMGyiF1DH0-WU7RzXaLuyqqtX-xyWc",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Mushoku Tensei II: Isekai Ittara Honki Dasu\", \n    \"airDate\": \"2023.07.10\", \n    \"numOfEpisodes\": 12\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/anime/create",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["anime", "create"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT: /anime/update/:id",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMmNlZGZmNDY3YzA2NzU0M2FlYTkzIiwiaWF0IjoxNjg5NDM5OTY5LCJleHAiOjE2ODk0NDM1Njl9.pLFicZj1fqcB4oodjeU-KgUt5o4ZNdLLEDgNRHpdmfg",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"airDate\": \"Sat Sep 13 275760 00:00:00 GMT+0000 (Coordinated Universal Time)\", \n    \"numOfEpisodes\": 12\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/anime/update/64b2cef1f467c067543aea9c",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["anime", "update", "64b2cef1f467c067543aea9c"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE: /anime/delete/:id",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMmUzYzk4Y2Y0MDA5NzNlZjgwOTg0IiwiaWF0IjoxNjg5NDQ5MTU3LCJleHAiOjE2ODk0NTI3NTd9.Ys-MGRzMVPHchVnOLuiS0uQIILxg7ZXBgUCO1pHMLZU",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/anime/delete/64b2f4ebadbb4fab1b4f72c4",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["anime", "delete", "64b2f4ebadbb4fab1b4f72c4"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET: /user/list",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiNTUxYzM4NGE2NWZlZDcyNGU3Zjc1IiwiaWF0IjoxNjg5NjA0NTQ5LCJleHAiOjE2ODk2MDgxNDl9.AXAF_ttpx6omweL0xTd0T8xp5aoTqnWjfnKV-Qhmzcs",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/user/list",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["user", "list"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET: /user/list/:id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiNTUxYzM4NGE2NWZlZDcyNGU3Zjc1IiwiaWF0IjoxNjg5NjA0NTQ5LCJleHAiOjE2ODk2MDgxNDl9.AXAF_ttpx6omweL0xTd0T8xp5aoTqnWjfnKV-Qhmzcs",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/user/list/myAnime",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["user", "list", "myAnime"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT: /user/list/:id",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjRiNTczMzg0ZTA0MGNmNTQ5MzZmMzg4IiwiaWF0IjoxNjg5NjEzMTE2LCJleHAiOjE2ODk2MTY3MTZ9.xK9X176ovbpH41fj170a3s4iA0iqsUp7d9Zj9Z8njHs",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"progress\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/user/list/Mushoku Tensei II: Isekai Ittara Honki Dasu",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": [
+            "user",
+            "list",
+            "Mushoku Tensei II: Isekai Ittara Honki Dasu"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE: /user/list/:id",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2VsZSIsImlkIjoiNjRiMzhmYjg0NzBlNmNjZjNhMTY1YTk0IiwiaWF0IjoxNjg5NDk2NzAxLCJleHAiOjE2ODk1MDAzMDF9.Fk8Qy3jMjsvW1FqhmPNF0BYeOgTOBtSXou-EMkOz8_g",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/user/list/MyAnime",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["user", "list", "MyAnime"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET: /user/schedule",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjRiNTg5NGRlZjI5OWFiZDZjMjk0OWQ1IiwiaWF0IjoxNjg5NjE4NzY4LCJleHAiOjE2ODk2MjIzNjh9.YEqwaRyJzka2CxMGyiF1DH0-WU7RzXaLuyqqtX-xyWc",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/user/schedule",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["user", "schedule"]
+        }
+      },
+      "response": []
+    }
+  ]
 }
