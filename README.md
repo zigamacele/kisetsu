@@ -1,5 +1,8 @@
 # Kisetsu
 
+
+<img src="https://i.imgur.com/4XJ1rH3.png">
+
 Kisetsu is an API designed for anime enthusiasts, allowing them to conveniently save and retrieve information about their favorite anime series. Whether you're an avid anime watcher or a casual viewer.
 
 ## Manual Installation
